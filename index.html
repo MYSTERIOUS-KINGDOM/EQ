@@ -12,13 +12,12 @@
 
   <style>
     html,body {margin:0;height:100%;overflow:hidden;background:transparent;font-family:System-ui}
-    a-scene {width:100vw;height:100vh;background:transparent!important}
-    #loader {position:fixed;inset:0;display:flex;align-items:center;justify-content:center;
-             background:#000c;color:#fff;font-size:18px;z-index:15}
+    a-scene  {width:100vw;height:100vh;background:transparent!important}
+    #loader  {position:fixed;inset:0;display:flex;align-items:center;justify-content:center;
+              background:#000c;color:#fff;font-size:18px;z-index:15}
   </style>
 </head>
 <body>
-  <!-- prosty loader -->
   <div id="loader">🔍 Ładowanie kamery…</div>
 
   <a-scene
@@ -26,35 +25,54 @@
     mindar-image="imageTargetSrc:targets.mind;autoStart:true;filterBeta:0.95;filterMinCF:0.00001"
     vr-mode-ui="enabled:false">
 
-    <!-- kamera MindAR -->
     <a-camera mindar-image-camera look-controls="enabled:false"></a-camera>
-
-    <!-- jeden anchor dla targetu #0 -->
     <a-entity id="anchor-mindread" mindar-image-target="targetIndex:0"></a-entity>
   </a-scene>
 
   <script>
-    // ukryj loader po starcie renderu
+    /* ukryj loader po starcie renderu */
     document.querySelector('a-scene').addEventListener('renderstart', () => loader.remove());
 
-    // funkcja budująca plane z PNG
+    /* funkcja budująca plane z PNG */
     function makePlane(srcPath) {
       const plane = document.createElement('a-plane');
       plane.setAttribute('src', srcPath);
-      plane.setAttribute('width', '1');
-      plane.setAttribute('height', '1.3');      // dostosuj, jeśli potrzebny inny AR
-      plane.setAttribute('position', '0 0.03 0'); // 3 cm w górę
+      plane.setAttribute('width',  '1');
+      plane.setAttribute('height', '1.3');
+      plane.setAttribute('position', '0 0.03 0');  /* 3 cm w górę */
       plane.setAttribute('material', 'shader:flat;transparent:true;side:double;');
       return plane;
     }
 
-    // podpinamy PNG, gdy target #0 widoczny
+    /* podpinamy PNG, gdy target #0 widoczny */
     const anchor = document.getElementById('anchor-mindread');
     anchor.addEventListener('targetFound', () => {
       anchor.innerHTML = '';
       anchor.appendChild(makePlane('assets/mind-read1x.png'));
     });
     anchor.addEventListener('targetLost', () => anchor.innerHTML = '');
+
+    /* >>>  NOWA FUNKCJA – TAP = WYJŚCIE Z AR  <<< */
+    function quitAR () {
+      const sceneEl  = document.querySelector('a-scene');
+      const mindar   = sceneEl.components['mindar-image'];
+
+      /* zatrzymaj tracking i kamerę */
+      if (mindar && mindar.controller) {
+        mindar.controller.stop();
+        if (mindar.controller.video?.srcObject) {
+          mindar.controller.video.srcObject.getTracks().forEach(t => t.stop());
+        }
+      }
+      /* usuń scenę i wyczyść pamięć renderera */
+      if (sceneEl.renderer) sceneEl.renderer.dispose();
+      sceneEl.parentNode.removeChild(sceneEl);
+
+      /* odśwież stronę, by wrócić do „czystej” kamery */
+      setTimeout(() => location.reload(), 50);
+    }
+    /* pojedyncze tapnięcie w dowolne miejsce wyłącza AR */
+    window.addEventListener('click', quitAR, { once:true });
   </script>
 </body>
 </html>
