@@ -3,8 +3,9 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no" />
-  <title>WebAR – Miecznik (tap → restart skanowania)</title>
+  <title>WebAR – Miecznik (szybkie wyświetlanie)</title>
 
+  <!-- biblioteki -->
   <script src="libs/aframe-v1.2.0.min.js"></script>
   <script src="libs/mindar-image.prod.js"></script>
   <script src="libs/mindar-image-aframe.prod.js"></script>
@@ -29,38 +30,34 @@
     </a-assets>
 
     <a-camera mindar-image-camera look-controls="enabled:false"></a-camera>
-
-    <!-- jedyny target: miecznik -->
     <a-entity id="anchor-miecznik" mindar-image-target="targetIndex:0"></a-entity>
   </a-scene>
 
   <script>
-    /* ukryj loader po starcie renderu */
+    /* ukryj loader po pierwszym wyrenderowaniu */
     document.querySelector('a-scene')
             .addEventListener('renderstart',()=>loader.remove());
 
-    /* plane z PNG, 3 cm w górę */
+    /* buduje płaszczyznę z PNG, 3 cm w górę */
     function makePlane(sel){
       const img=document.querySelector(sel);
-      const ar = img.naturalHeight/img.naturalWidth;
+      const ar = img.naturalHeight / img.naturalWidth;
       const p  = document.createElement('a-plane');
       p.setAttribute('src',sel);
       p.setAttribute('width','1');
       p.setAttribute('height',ar.toString());
-      p.setAttribute('position','0 0.03 0');
+      p.setAttribute('position','0 0.03 0');          /* 3 cm ↑ */
       p.setAttribute('material','shader:flat;transparent:true;side:double;');
       return p;
     }
 
-    /* podpinamy miecznika do anchora */
+    /* wyświetl miecznik, gdy target 0 wykryty */
     const anchor=document.getElementById('anchor-miecznik');
-    anchor.addEventListener('targetFound',()=>{anchor.innerHTML='';anchor.appendChild(makePlane('#tex-miecznik'));});
-    anchor.addEventListener('targetLost', ()=>anchor.innerHTML='');
-
-    /* TAP = stop + start (wraca linia skanowania), bez przeładowania strony */
-    function restartAR(){
-      const scene = document.querySelector('a-scene');
-      const mind  = scene.components['mindar-image'];
-      if(!mind?.controller) return;
-
-      mind.controller.stop();                              /* zatrzy*
+    anchor.addEventListener('targetFound',()=>{
+      anchor.innerHTML='';
+      anchor.appendChild(makePlane('#tex-miecznik'));
+    });
+    anchor.addEventListener('targetLost',()=>anchor.innerHTML='');
+  </script>
+</body>
+</html>
