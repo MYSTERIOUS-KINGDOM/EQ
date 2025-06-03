@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no" />
-    <title>WebAR – Miecznik Atak</title>
+    <title>WebAR – Miecznik Atak (Czułość)</title>
     <script src="libs/aframe-v1.2.0.min.js"></script>
     <script src="libs/mindar-image.prod.js"></script>
     <script src="libs/mindar-image-aframe.prod.js"></script>
@@ -18,7 +18,7 @@
 
     <a-scene
       embedded
-      mindar-image="imageTargetSrc:targets.mind; autoStart: true"
+      mindar-image="imageTargetSrc:targets.mind; autoStart: true; filterBeta: 0.85; filterMinCF: 0.35"
       vr-mode-ui="enabled: false"
       device-orientation-permission-ui="enabled: true">
       <a-assets>
