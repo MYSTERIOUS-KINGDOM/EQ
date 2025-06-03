@@ -1,57 +1,46 @@
 <!DOCTYPE html>
 <html lang="pl">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no" />
-  <title>WebAR – MIECZNIK ATAK (PNG)</title>
-  <script src="libs/aframe-v1.2.0.min.js"></script>
-  <script src="libs/mindar-image.prod.js"></script>
-  <script src="libs/mindar-image-aframe.prod.js"></script>
-  <style>
-    html,body{margin:0;height:100%;overflow:hidden;background:transparent;font-family:System-ui}
-    a-scene{width:100vw;height:100vh;background:transparent!important}
-    #loader{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;
-            background:#000c;color:#fff;font-size:18px;z-index:15}
-  </style>
-</head>
-<body>
-<div id="loader">🔍 Ładowanie kamery…</div>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no" />
+    <title>WebAR – Miecznik Atak</title>
+    <script src="libs/aframe-v1.2.0.min.js"></script>
+    <script src="libs/mindar-image.prod.js"></script>
+    <script src="libs/mindar-image-aframe.prod.js"></script>
+    <style>
+      html,body { margin:0; height:100%; overflow:hidden; background:transparent; font-family:System-ui }
+      a-scene { width:100vw; height:100vh; background:transparent!important }
+      #loader { position:fixed; inset:0; display:flex; align-items:center; justify-content:center; background:#000c; color:#fff; font-size:18px; z-index:15 }
+    </style>
+  </head>
+  <body>
+    <div id="loader">🔍 Ładowanie kamery…</div>
 
-<a-scene
-  embedded
-  mindar-image="imageTargetSrc:targets.mind;autoStart:true;filterBeta:0.95;filterMinCF:0.00001"
-  vr-mode-ui="enabled:false"
-  device-orientation-permission-ui="enabled:true">
-  <a-assets>
-    <img id="tex-miecznik" src="assets/Miecznik-atak.png">
-  </a-assets>
-  <a-camera mindar-image-camera look-controls="enabled:false"></a-camera>
-  <a-entity id="anchor-miecznik" mindar-image-target="targetIndex:0"></a-entity>
-</a-scene>
+    <a-scene
+      embedded
+      mindar-image="imageTargetSrc:targets.mind; autoStart: true"
+      vr-mode-ui="enabled: false"
+      device-orientation-permission-ui="enabled: true">
+      <a-assets>
+        <img id="miecznik-img" src="assets/Miecznik-atak.png" />
+      </a-assets>
+      <a-camera mindar-image-camera look-controls="enabled: false"></a-camera>
+      <a-entity mindar-image-target="targetIndex: 0">
+        <a-plane
+          src="#miecznik-img"
+          width="1"
+          height="1.3"
+          position="0 0 0"
+          material="shader: flat; transparent: true">
+        </a-plane>
+      </a-entity>
+    </a-scene>
 
-<script>
-document.querySelector('a-scene').addEventListener('renderstart',()=>loader.remove());
-
-function makePlane(texSel){
-  const img=document.querySelector(texSel);
-  const ar = img.naturalHeight / img.naturalWidth;
-  const p  = document.createElement('a-plane');
-  p.setAttribute('src', texSel);
-  p.setAttribute('width', '1');
-  p.setAttribute('height', ar.toString());
-  p.setAttribute('position', '0 0.05 0.005');
-  p.setAttribute('material','shader:flat;transparent:true');
-  return p;
-}
-
-const anchor = document.getElementById('anchor-miecznik');
-anchor.addEventListener('targetFound', ()=>{
-  anchor.innerHTML = '';
-  anchor.appendChild(makePlane('#tex-miecznik'));
-});
-anchor.addEventListener('targetLost', ()=>{
-  anchor.innerHTML = '';
-});
-</script>
-</body>
+    <script>
+      document.querySelector('a-scene').addEventListener('renderstart', () => {
+        const loader = document.getElementById('loader');
+        if (loader) loader.remove();
+      });
+    </script>
+  </body>
 </html>
