@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no" />
   <title>WebAR – Miecznik (szybkie wyświetlanie)</title>
 
-  <!-- biblioteki -->
   <script src="libs/aframe-v1.2.0.min.js"></script>
   <script src="libs/mindar-image.prod.js"></script>
   <script src="libs/mindar-image-aframe.prod.js"></script>
@@ -34,24 +33,24 @@
   </a-scene>
 
   <script>
-    /* ukryj loader po pierwszym wyrenderowaniu */
+    /* usuń loader, gdy MindAR jest gotów */
     document.querySelector('a-scene')
-            .addEventListener('renderstart',()=>loader.remove());
+            .addEventListener('arReady', ()=>loader.remove());
 
-    /* buduje płaszczyznę z PNG, 3 cm w górę */
+    /* plane z PNG – 3 cm w górę */
     function makePlane(sel){
       const img=document.querySelector(sel);
-      const ar = img.naturalHeight / img.naturalWidth;
+      const ar = img.naturalHeight/img.naturalWidth;
       const p  = document.createElement('a-plane');
       p.setAttribute('src',sel);
       p.setAttribute('width','1');
       p.setAttribute('height',ar.toString());
-      p.setAttribute('position','0 0.03 0');          /* 3 cm ↑ */
+      p.setAttribute('position','0 0.03 0');
       p.setAttribute('material','shader:flat;transparent:true;side:double;');
       return p;
     }
 
-    /* wyświetl miecznik, gdy target 0 wykryty */
+    /* wyświetl miecznik, gdy target wykryty */
     const anchor=document.getElementById('anchor-miecznik');
     anchor.addEventListener('targetFound',()=>{
       anchor.innerHTML='';
